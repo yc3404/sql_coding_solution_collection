@@ -39,8 +39,10 @@ FirstName, LastName, City, State
 
 **Solution in MySQL**
 
+```
 SELECT P.FirstName, P.LastName, A.City, A.State FROM Person P
 LEFT JOIN Address A ON P.PersonId=A.PersonId;
+```
 
 
 
@@ -70,16 +72,22 @@ For example, given the above Employee table, the query should return `200`as the
 
 **Solution in SQL Server**
 
+```
 select Salary AS SecondHighestSalary from
 (select Salary, dense_rank() OVER(ORDER BY Salary DESC) as s_rank from Employee) AS E1
 WHERE E1.s_rank = 2;
+```
 
 **Solution in MySQL**
 
+```
 select max(salary) as SecondHighestSalary from employee
 where salary < 
     (select max(salary)
      from employee) ;
+
+
+```
 
 
 
@@ -111,6 +119,7 @@ For example, given the above Employee table, the *n*th highest salary where *n* 
 
 **Solution in MySQL**
 
+```mysql
 CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
 BEGIN
 DECLARE m int;
@@ -124,6 +133,7 @@ SET m = n-1;
 ​      
   );
 END
+```
 
 
 
@@ -161,13 +171,17 @@ For example, given the above `Scores` table, your query should generate the foll
 
 **Solution in MySQL**
 
+```
 SELECT  Score, ROW_NUMBER() OVER (ORDER BY Score DESC) Rank
 FROM Scores
 ORDER BY Score DESC;
+```
 
 **Solution in SQL Server**
 
+```
 select Score, dense_rank() over (Order by Score desc) AS Rank from scores;
+```
 
 
 
@@ -223,14 +237,17 @@ In IT department, Max earns the highest salary, both Randy and Joe earn the seco
 
 **Solution in SQL Server**
 
+```
 select rank_salary.Department, rank_salary.Employee,rank_salary.Salary FROM (
 select Department.Name AS Department, Employee.Name AS Employee, Salary, dense_rank() OVER 
 (PARTITION BY Department.Name ORDER BY Salary DESC) AS R1
 FROM Employee JOIN Department ON Employee.DepartmentID = Department.Id) AS rank_salary
 WHERE R1 <= 3;
+```
 
 **Solution in MySQL**
 
+```
 select Department,Employee,Salary
 from 
 (
@@ -243,6 +260,9 @@ from Employee as e inner join Department as d on e.DepartmentId = d.Id
 ) as sub
 where row_num <= 3
 order by 1,3 desc;
+
+
+```
 
 
 
@@ -273,8 +293,12 @@ Given the `Employee` table, write a SQL query that finds out employees who earn 
 
 **Solution in MySQL**
 
+```
 SELECT A.Name AS Employee FROM Employee A
 WHERE ManagerId IS NOT NULL AND Salary > (SELECT Salary FROM Employee WHERE Id = A.ManagerId);
+
+
+```
 
 
 
@@ -311,8 +335,10 @@ For example, according to the above table, we should output:
 
  **Solution in MySQL**
 
+```
 SELECT name, population, area FROM World
 WHERE area > 3000000 OR population > 25000000;
+```
 
 
 
@@ -348,8 +374,12 @@ Your output is the whole `Person` table after executing your sql. Use `delete` s
 
 **Solution in MySQL**
 
+```
 DELETE P1 FROM Person P1, Person P2
 WHERE P1.Email = P2.Email AND P1.Id > P2.Id;
+
+
+```
 
 
 
@@ -389,8 +419,12 @@ update
 
 **Solution in MySQL**
 
+```
 UPDATE salary
 SET sex = CASE WHEN sex = 'f' THEN 'm' ELSE 'f' END;
+
+
+```
 
 
 
@@ -441,11 +475,15 @@ Max and Jim both have the highest salary in the IT department and Henry has the 
 
 **Solution in MySQL**
 
+```
 SELECT Department.Name AS Department, Employee.Name AS Employee, Salary FROM Employee
 JOIN Department ON (DepartmentId = Department.Id)
 WHERE (Employee.DepartmentId, Salary) IN (
 SELECT DepartmentId, MAX(Salary) FROM Employee
 GROUP BY DepartmentId);
+
+
+```
 
 
 
@@ -506,6 +544,7 @@ Special thanks to [@cak1erlizhou](https://leetcode.com/discuss/user/cak1erlizhou
 
 **Solution in MySQL**
 
+```
 select Request_at as "Day",
        round(sum(case when status in ('cancelled_by_client', 'cancelled_by_driver') then 1 else 0 end) / sum(1), 2) as "Cancellation Rate"
   from Trips t
@@ -514,6 +553,7 @@ select Request_at as "Day",
    and t.Request_at between '2013-10-01' and '2013-10-03'
   group by 1
   order by 1;
+```
 
 
 
@@ -546,8 +586,10 @@ For example, return the following Ids for the above `Weather` table:
 
 **Solution in MySQL**
 
+```
 SELECT A.Id FROM Weather A, Weather B
 WHERE A.RecordDate = B.RecordDate + INTERVAL 1 DAY AND A.Temperature > B.Temperature;
+```
 
 
 
@@ -555,11 +597,7 @@ WHERE A.RecordDate = B.RecordDate + INTERVAL 1 DAY AND A.Temperature > B.Tempera
 
 Mary is a teacher in a middle school and she has a table `seat` storing students' names and their corresponding seat ids.
 
-The column 
-
-id
-
- is continuous increment.
+The column id is continuous increment.
 
  
 
@@ -606,17 +644,23 @@ If the number of students is odd, there is no need to change the last one's seat
 
 **Solution in MySQL**
 
+```
 SELECT (CASE WHEN MOD(id,2) != 0 AND counts = id THEN id
        WHEN MOD(id,2)!=0 AND counts != id THEN id+1
        ELSE id-1 END) AS id, student FROM seat, (SELECT COUNT(*) AS counts from seat) AS seat_counts
        ORDER BY id ASC;
+```
 
 **Solution in SQL Server**
 
+```
 select (case when id % 2 = 0 then id - 1 
         when id % 2 = 1  and id <> (select max(id) as count1 from seat)then id+1
         else id end) AS id, student from seat
         order by id;
+
+
+```
 
 
 
@@ -650,11 +694,13 @@ For example, given the above `Logs` table, `1` is the only number that appears c
 
 **Solution in MySQL**
 
+```
 SELECT DISTINCT L1.Num AS ConsecutiveNums FROM Logs L1,Logs L2,Logs L3
 WHERE L1.Id=L2.Id +1 AND L2.Id = L3.Id + 1
 AND L1.Num = L2.Num 
 AND L2.Num = L3.Num
 AND L3.Num = L1.Num;
+```
 
 
 
@@ -686,9 +732,13 @@ For example, your query should return the following for the above table:
 
 **Solution in MySQL**
 
+```
 SELECT Email FROM Person
 GROUP BY Email 
 HAVING COUNT(Email) > 1;
+
+
+```
 
 
 
@@ -740,10 +790,14 @@ Please display the result in follower's alphabet order.
 
 **Solution in MySQL**
 
+```
 SELECT a.follower, COUNT(DISTINCT b.follower) AS num FROM follow a
 JOIN follow b ON a.follower=b.followee
 GROUP BY a.follower
 ORDER BY a.follower;
+
+
+```
 
 
 
@@ -788,9 +842,13 @@ Using the above tables as example, return the following:
 
 **Solution in MySQL**
 
+```
 select name as Customers from customers
 where id not in
 (select customerid from orders);
+
+
+```
 
 
 
@@ -835,6 +893,7 @@ The students should not be counted duplicate in each course.
 
 **Solution in MySQL**
 
+```
 SELECT
     class
 FROM
@@ -842,6 +901,7 @@ FROM
 GROUP BY class
 HAVING COUNT(DISTINCT student) >= 5
 ;
+```
 
 
 
@@ -903,9 +963,13 @@ So, the result is the sum of TIV_2016 of the first and last record, which is 45.
 
 **Solution in SQL Server**
 
+```
 select SUM(TIV_2016) AS TIV_2016 FROM INSURANCE WHERE TIV_2015 IN 
 (SELECT TIV_2015 FROM INSURANCE GROUP BY TIV_2015 HAVING COUNT(TIV_2015) > 1)
 AND CONCAT(LAT,LON) IN (SELECT CONCAT(LAT,LON) FROM INSURANCE GROUP BY CONCAT(LAT,LON) HAVING COUNT(CONCAT(LAT,LON))=1);
+
+
+```
 
 
 
@@ -956,21 +1020,7 @@ Note:
 
 - It is guaranteed there is only 1 people having the most friends.
 
-- The friend request could only been accepted once, which mean there is no multiple records with the same
-
-   
-
-  requester_id
-
-   
-
-  and
-
-   
-
-  accepter_id
-
-  value.
+- The friend request could only been accepted once, which mean there is no multiple records with the same requester_id and accepter_id value.
 
    
 
@@ -988,6 +1038,7 @@ Note:
 
 **Solution in SQL Server**
 
+```
 SELECT ids as id, cnt as num from(
 select ids, count(*) as cnt from(
 SELECT requester_id AS ids from request_accepted
@@ -996,6 +1047,7 @@ SELECT accepter_id FROM request_accepted) as tb1
     group by ids) as tb2
     order by cnt desc
     offset 0 rows fetch next 1 rows only;
+```
 
 
 
@@ -1042,9 +1094,13 @@ Note:
 
 **Solution in SQL Server**
 
+```
 select distinct s1.seat_id from cinema s1 
 join cinema s2 on abs(s1.seat_id - s2.seat_id) = 1 and s1.free = 1 and s2.free = 1
 order by s1.seat_id;
+
+
+```
 
 
 
@@ -1082,20 +1138,16 @@ For the sample data above, the result is:
 
 **Solution in MySQL**
 
+```
 SELECT name FROM customer
 WHERE referee_id<>2 OR referee_id IS NULL;
+```
 
 
 
 ## LC 613 Shortest Distance in a Line
 
-Table 
-
-```
-point
-```
-
- holds the x coordinate of some points on x-axis in a plane, which are all integers.
+Table point holds the x coordinate of some points on x-axis in a plane, which are all integers.
 
  
 
@@ -1141,8 +1193,12 @@ Follow-up:
 
 **Solution in MySQL**
 
+```
 SELECT MIN(ABS(p1.x-p2.x)) AS shortest FROM point p1, point p2
 WHERE p1.x != p2.x;
+
+
+```
 
 
 
@@ -1183,9 +1239,13 @@ For the example above, the output should be:
 
 **Solution in MySQL**
 
+```
 SELECT * FROM cinema
 WHERE (id%2) <> 0 AND description NOT LIKE '%boring%'
 ORDER BY rating DESC;
+
+
+```
 
 
 
@@ -1225,9 +1285,13 @@ If there is no such number, just output null.
 
 **Solution in MySQL**
 
+```
 SELECT MAX(num) num FROM (SELECT num FROM number
 GROUP BY num
 HAVING COUNT(num)=1) as t;
+
+
+```
 
 
 
@@ -1271,12 +1335,16 @@ For the sample data above, your query should return the follow result:
 
 **Solution in MySQL**
 
+```
 SELECT x,y,z,
 CASE WHEN x + y <= z THEN 'No'
      WHEN x + z <= y THEN 'No' 
      WHEN y + z <= x THEN 'No' 
      ELSE 'Yes' END AS triangle
      FROM triangle;
+
+
+```
 
 
 
@@ -1368,15 +1436,9 @@ The table
 orders
 ```
 
- holds the sales record information, salesperson and customer company are represented by 
+ holds the sales record information, salesperson and customer company are represented by sales_id and 
 
-sales_id
-
- and 
-
-com_id
-
-.
+com_id.
 
 **output**
 
@@ -1397,17 +1459,23 @@ so we need to output all the other **names** in table `salesperson`.
 
 **Solution in SQL Server**
 
+```
 select name from salesperson
 where sales_id NOT IN (
 SELECT SALES_ID FROM ORDERS
 JOIN COMPANY ON ORDERS.COM_ID = COMPANY.COM_ID
 WHERE COMPANY.NAME = 'RED');
+```
 
 **Solution in MySQL**
 
+```
 select salesperson.name from salesperson 
 JOIN orders ON SALESPERSON.SALES_ID = ORDERS.SALES_ID
 JOIN company ON ORDERS.COM_ID = COMPANY.COM_ID;
+
+
+```
 
 
 
@@ -1496,11 +1564,13 @@ Follow-up:
 
 **Solution in MySQL**
 
+```
 select
 (select count(distinct requester_id, accepter_id) from request_accepted)
 /
 (select count(distinct sender_id, send_to_id) from friend_request) 
 as accepted_rate;
+```
 
 
 
@@ -1554,9 +1624,11 @@ So the result is customer_number '3'.
 
 **Solution in MySQL**
 
+```
 SELECT customer_number FROM orders
 GROUP BY customer_number
 ORDER BY COUNT(*) DESC LIMIT 1;
+```
 
 
 
@@ -1627,10 +1699,12 @@ The **Output** should be:
 
 **Solution in MySQL**
 
+```
 SELECT dept_name, COUNT(student_name) AS student_number FROM student
 RIGHT JOIN department ON student.dept_id = department.dept_id
 GROUP BY dept_name
 ORDER BY student_number DESC, dept_name;
+```
 
 
 
@@ -1672,16 +1746,22 @@ question 285 has answer rate 1/1, while question 369 has 0/1 answer rate, so out
 
 **Solution in SQL Server**
 
+```
 select question_id as survey_log from survey_log 
 group by question_id
 order by count(answer_id)/count(question_id) desc
 offset 0 rows fetch next 1 rows only;
+```
 
 **Solution in MySQL**
 
+```
 SELECT question_id AS survey_log FROM survey_log
 GROUP BY question_id
 ORDER BY COUNT(answer_id)/COUNT(question_id) DESC LIMIT 1;
+
+
+```
 
 
 
@@ -1731,9 +1811,11 @@ Example ouput:
 
 **Solution in MySQL**
 
+```
 SELECT Employee.name, Bonus.bonus FROM Employee
 LEFT JOIN Bonus ON Employee.empId = Bonus.empId
 WHERE bonus < 1000 OR bonus IS NULL;
+```
 
 
 
@@ -1787,19 +1869,23 @@ Write a sql to find the name of the winning candidate, the above example will re
 
 **Solution in SQL Server**
 
+```
 SELECT name AS Name FROM CANDIDATE JOIN (select  top 1 candidateid AS CID, count(*) as c from vote 
 group by candidateid 
 order by c desc) AS winner
 on Candidate.id = winner.CID;
+```
 
 **Solution in MySQL**
 
+```
 with c1 as (select  candidateid, count(*) as c from vote 
 group by candidateid 
 order by c desc
 LIMIT 1)
 select Name from Candidate
 where id = c1.candidateid;
+```
 
 
 
@@ -1837,6 +1923,9 @@ No one would report to himself.
 
 **Solution in SQL Server**
 
+```
 SELECT Name FROM EMPLOYEE AS T1
 JOIN (SELECT ManagerId FROM Employee group by managerid having count(managerid) >= 5) AS T2
 ON T1.ID = T2.MANAGERID;
+```
+
